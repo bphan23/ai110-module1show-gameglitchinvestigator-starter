@@ -25,9 +25,27 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+**Game Purpose:**
+A number guessing game where the player tries to guess a secret number within a limited number of attempts. The game gives hints after each guess to guide the player toward the answer, and tracks a score based on how quickly they win.
+
+**Bugs Found:**
+- The hint messages were swapped — "Too High" said "Go Higher" and "Too Low" said "Go Lower," so every hint pointed the player in the wrong direction.
+- Out-of-range inputs (like 0 or 101) were accepted without any error message.
+- The attempt counter was initialized to 1 instead of 0, so players silently lost one attempt every game.
+- Invalid guesses (empty input, non-numbers, out-of-range) incremented the attempt counter, causing the game to end earlier than the displayed limit suggested.
+- Pressing "New Game" only reset the attempt count and secret — `status`, `score`, and `history` were left over from the previous game, causing the game-over screen to appear immediately.
+- When the last attempt was used, the display still showed "1 attempt left" while the game-over message appeared, making it look like the game ended one guess too early.
+- With 0 attempts left, the input and submit button remained visible, allowing extra guesses after the game should have ended.
+
+**Fixes Applied:**
+- Swapped the hint messages in `check_guess` so "Too High" correctly says "Go Lower" and "Too Low" says "Go Higher."
+- Added range validation in the submit block to reject guesses outside `[low, high]`.
+- Initialized `st.session_state.attempts` to `0` instead of `1`.
+- Moved the `attempts += 1` increment to only fire for valid, in-range guesses.
+- Updated the New Game handler to also reset `status`, `score`, and `history`.
+- Replaced the static "Attempts left" display with an `st.empty()` placeholder filled after the submit block, so the count always reflects the post-submission state.
+- Added `st.rerun()` after setting `status = "lost"` so the status check fires before the input widgets render, preventing guesses after game over.
+- Moved all four core functions (`get_range_for_difficulty`, `parse_guess`, `check_guess`, `update_score`) from `app.py` into `logic_utils.py` and added 5 new pytest tests covering input parsing and difficulty ranges.
 
 ## 📸 Demo
 

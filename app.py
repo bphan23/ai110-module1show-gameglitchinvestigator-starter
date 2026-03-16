@@ -52,10 +52,12 @@ if "history" not in st.session_state:
 
 st.subheader("Make a guess")
 
-st.info(
-    f"Guess a number between 1 and 100. "
-    f"Attempts left: {attempt_limit - st.session_state.attempts}"
-)
+# FIX: was computed at the top of the page using the pre-increment attempts value, so it
+# always showed the count from BEFORE the current submission. This caused "1 attempt left"
+# to display on the same render where game-over fired, making it look like the game skipped
+# from 1 to 0 automatically. Now using a placeholder that gets filled AFTER the submit
+# block so the displayed count always matches the actual post-submission state.
+attempts_placeholder = st.empty()
 
 with st.expander("Developer Debug Info"):
     st.write("Secret:", st.session_state.secret)
@@ -88,9 +90,11 @@ if new_game:
     st.success("New game started.")
     st.rerun()
 
-# FIX: status check now shows the informative lost message; game-over is triggered via st.rerun()
-# so the "Attempts left" display always reflects the correct post-submission count before stopping
 if st.session_state.status != "playing":
+    attempts_placeholder.info(
+        f"Guess a number between {low} and {high}. "
+        f"Attempts left: {max(0, attempt_limit - st.session_state.attempts)}"
+    )
     if st.session_state.status == "won":
         st.success("You already won. Start a new game to play again.")
     else:
@@ -139,12 +143,19 @@ if submit:
                     f"Final score: {st.session_state.score}"
                 )
             else:
-                # FIX: was showing "Out of attempts!" inline while "1 attempt left" still displayed
-                # at the top of the page — now we rerun so the status check fires on a fresh render
-                # where "Attempts left" correctly shows 0
+                # FIX: rerun immediately on game over so the status check at the top fires
+                # before the input/button are rendered — without this, the widgets stay on
+                # screen and the player can submit a guess with 0 attempts left
                 if st.session_state.attempts >= attempt_limit:
                     st.session_state.status = "lost"
                     st.rerun()
+
+# Fill the placeholder here so every render — including the one where a guess was just
+# submitted — shows the correct post-submission attempts count
+attempts_placeholder.info(
+    f"Guess a number between {low} and {high}. "
+    f"Attempts left: {max(0, attempt_limit - st.session_state.attempts)}"
+)
 
 st.divider()
 st.caption("Built by an AI that claims this code is production-ready.")

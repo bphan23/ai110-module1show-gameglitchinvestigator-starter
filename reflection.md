@@ -52,13 +52,21 @@ Yes, I asked Claude to explain what tests already existed in the project and how
 
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
 
+Every time you interact with a Streamlit app — clicking a button, typing in a box — the entire Python script reruns from top to bottom. Session state is a dictionary that persists between those reruns, so variables like the secret number and attempt count survive instead of resetting. This project showed me how easy it is to get bugs from that model: if you forget to reset a value like status in session state, old data from a previous game quietly carries over and breaks the new one.
+
 ---
 
 ## 5. Looking ahead: your developer habits
 
 - What is one habit or strategy from this project that you want to reuse in future labs or projects?
-  - This could be a testing habit, a prompting strategy, or a way you used Git.
+- This could be a testing habit, a prompting strategy, or a way you used Git.
+
+he new tool I'd bring into future projects is Claude, I'd used other AI platforms before but this was my first time using it, and it was the most helpful of the ones I tried for coding tasks.
 
 - What is one thing you would do differently next time you work with AI on a coding task?
 
+I'd be more intentional about when I prompt AI. I asked it a lot of questions this time that I could have Googled quickly, which wasted credits. Next time I'll save AI prompts for problems I'm actually stuck on.
+
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+
+his project didn't drastically change how I think about AI-generated code since I was already familiar with it going in. The main takeaway was that Claude stood out to me as the strongest option for writing and debugging code compared to the other platforms I've used.
